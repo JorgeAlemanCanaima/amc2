@@ -8,7 +8,7 @@
     "binding": "ASSETS"
   },
   "kv_namespaces": [
-    { "binding": "CATALOGO", "id": "ae269ec2fc8e4fa797485df0bd378d4b" }
+    { "binding": "CATALOGO", "id": "10f7c3da7a9940a597c1726332dcc6a6" }
   ],
   "observability": { "enabled": true }
 }
