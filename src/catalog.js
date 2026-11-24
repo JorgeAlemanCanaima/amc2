@@ -1,5 +1,5 @@
-import seed from "../../lib/seed.js";
-import { isAdmin, json, needsKv } from "../../lib/auth.js";
+import seed from "../lib/seed.js";
+import { isAdmin, json, needsKv } from "../lib/auth.js";
 
 const KEY = "catalogo";
 const HISTORY_DAYS = 60; // copias anteriores que se guardan por si hay que volver atrás

@@ -1,0 +1,14 @@
+{
+  // Configuración del Worker "amc2" en Cloudflare (plan gratuito).
+  "name": "amc2",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "kv_namespaces": [
+    { "binding": "CATALOGO", "id": "ae269ec2fc8e4fa797485df0bd378d4b" }
+  ],
+  "observability": { "enabled": true }
+}

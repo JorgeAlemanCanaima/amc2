@@ -1,4 +1,4 @@
-import { isAdmin, json } from "../../lib/auth.js";
+import { isAdmin, json } from "../lib/auth.js";
 
 export async function onRequestPost({ request, env }) {
   if (!env.ADMIN_PASSWORD) return json({ error: "Falta configurar ADMIN_PASSWORD en Cloudflare" }, 500);

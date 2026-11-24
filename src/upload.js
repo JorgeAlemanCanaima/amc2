@@ -1,4 +1,4 @@
-import { isAdmin, json, needsKv } from "../../lib/auth.js";
+import { isAdmin, json, needsKv } from "../lib/auth.js";
 
 // Recibe una foto ya reducida en el navegador (JPEG en base64) y la guarda en KV.
 export async function onRequestPost({ request, env }) {
