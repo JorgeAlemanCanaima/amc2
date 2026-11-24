@@ -47,7 +47,7 @@ Un catálogo con unas decenas de fotos (unos 150 KB cada una) usa una mínima pa
 
 ## Dominio propio (opcional)
 
-En el Worker, ve a **Settings → Domains & Routes** para conectar un dominio como `tusalon.com` si ya lo compraste. El dominio sí se paga aparte. El sitio funciona perfectamente con la dirección gratuita `.pages.dev`.
+En el Worker, ve a **Settings → Domains & Routes** para conectar un dominio como `tusalon.com` si ya lo compraste. El dominio sí se paga aparte. El sitio funciona perfectamente con la dirección gratuita `.workers.dev`.
 
 ## Probarlo en tu computadora (opcional)
 
