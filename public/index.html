@@ -143,13 +143,17 @@ function render(){
     app.innerHTML = '<div class="wrap"><p class="empty">' + esc(loadError || "Cargando catálogo…") + '</p>' + (loadError ? '<button type="button" id="btn-retry">Reintentar</button>' : '') + '</div>';
     return;
   }
-  document.title = (state.salon.name || "Catálogo") + " · Servicios";
+  document.title = (state.salon.name || "Catálogo") + (adminRoute ? " · Panel privado" : " · Servicios");
   var s = state.salon, h = "";
+  if (adminRoute && !canWrite){
+    app.innerHTML = '<div class="wrap" style="max-width:520px;padding-top:12vh"><div class="eyebrow">Panel privado</div><h1>' + esc(s.name) + '</h1>' + (statusMsg ? '<div class="notice"><span>' + esc(statusMsg) + '</span></div>' : '') + renderLogin() + '</div>';
+    return;
+  }
   h += '<header class="top"><div class="wrap"><div class="top-row"><div style="min-width:0">';
   h += '<div class="eyebrow">Catálogo de servicios</div>';
   h += '<h1>' + esc(s.name) + '</h1><p class="tagline">' + esc(s.tagline) + '</p></div>';
   h += '<div class="tools">';
-  if (window.jspdf) h += '<button id="btn-pdf" type="button">Descargar PDF</button>';
+  if (window.jspdf && canWrite) h += '<button id="btn-pdf" type="button">Descargar PDF</button>';
   if (canWrite) h += editing ? '<button id="btn-view" type="button">Ver como cliente</button>' : '<button id="btn-edit" class="primary" type="button">Editar catálogo</button>';
   if (canWrite) h += '<button id="btn-logout" class="ghost" type="button">Salir</button>';
   h += '</div></div>';
@@ -157,7 +161,6 @@ function render(){
   if (s.hours) h += '<span><b>Horario</b> · ' + esc(s.hours) + '</span>';
   if (s.address) h += '<span><b>Dirección</b> · ' + esc(s.address) + '</span>';
   h += '</div>';
-  if (adminRoute && !canWrite) h += renderLogin();
   if (hasDraft && canWrite) h += '<div class="notice"><span>Tienes cambios sin guardar de una visita anterior.</span><span class="tools"><button id="btn-restore" type="button">Recuperar cambios</button><button id="btn-dropdraft" class="ghost" type="button">Descartarlos</button></span></div>';
   if (canWrite && (anyExample() || s.name === DEFAULT_NAME || !s.phone)) h += '<div class="notice"><span>Falta completar: ' + [s.name === DEFAULT_NAME ? "el nombre del salón" : "", !s.phone ? "el teléfono o WhatsApp" : "", !s.address ? "la dirección" : "", anyExample() ? "los servicios de ejemplo" : ""].filter(Boolean).join(", ") + '. Toca <b>Editar catálogo</b> para agregarlo, junto con las fotos de tus trabajos.</span></div>';
   if (statusMsg && !editing) h += '<div class="notice"><span>' + esc(statusMsg) + '</span></div>';
@@ -172,7 +175,7 @@ function render(){
 }
 
 function renderLogin(){
-  return '<form class="notice" id="login-form" autocomplete="on"><span>Acceso del salón: escribe tu contraseña para editar el catálogo.</span><span class="tools"><input type="password" id="login-pass" autocomplete="current-password" aria-label="Contraseña" style="font:inherit;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"><button class="primary" type="submit">Entrar</button></span></form>';
+  return '<form class="notice" id="login-form" autocomplete="on"><span>Escribe tu contraseña para entrar al panel.</span><span class="tools"><input type="password" id="login-pass" autocomplete="current-password" aria-label="Contraseña" style="font:inherit;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"><button class="primary" type="submit">Entrar</button></span></form>';
 }
 
 function cardPhoto(sv, editable){
