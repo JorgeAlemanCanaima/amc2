@@ -1,9 +1,9 @@
-# Catálogo de uñas en Cloudflare
+# Catálogo Uñas en Cloudflare
 
 Página pública con los servicios, precios y fotos del salón, más un panel para editarlo desde el celular o la computadora. Los precios y las fotos se guardan en **Workers KV**, el almacenamiento gratuito de Cloudflare, así que puedes cambiar precios sin tocar código. Todo funciona dentro del plan gratuito y **no pide tarjeta**.
 
-- Clientes: `https://amc2.<tu-subdominio>.workers.dev`
-- Tú (para editar): `https://amc2.<tu-subdominio>.workers.dev/admin` y tu contraseña
+- Clientes: `https://catalogo-unas.<tu-subdominio>.workers.dev`
+- Tú (para editar): `https://catalogo-unas.<tu-subdominio>.workers.dev/admin` y tu contraseña
 
 ## Qué hay en la carpeta
 
@@ -16,13 +16,13 @@ Página pública con los servicios, precios y fotos del salón, más un panel pa
 | `src/login.js` | Revisa la contraseña |
 | `src/fotos.js` | Muestra las fotos guardadas |
 | `lib/seed.js` | Catálogo inicial, se usa hasta que guardes por primera vez |
-| `wrangler.jsonc` | Configuración del Worker `amc2` y del almacenamiento KV `catalogo` |
+| `wrangler.jsonc` | Configuración del Worker `catalogo-unas` y del almacenamiento KV `catalogo` |
 
 ## Cómo está publicado
 
-El sitio corre como **Cloudflare Worker** llamado `amc2`, conectado al repositorio de GitHub. Cada vez que cambia la rama `main`, Cloudflare lo vuelve a publicar solo, con `npx wrangler deploy`.
+El sitio corre como **Cloudflare Worker** llamado `catalogo-unas`, conectado al repositorio de GitHub. Cada vez que cambia la rama `main`, Cloudflare lo vuelve a publicar solo, con `npx wrangler deploy`.
 
-Configuración única en Cloudflare (**Workers & Pages → amc2 → Settings**):
+Configuración única en Cloudflare (**Workers & Pages → catalogo-unas → Settings**):
 
 1. **Variables and Secrets → Add**, tipo **Secret**:
    - Nombre: `ADMIN_PASSWORD`

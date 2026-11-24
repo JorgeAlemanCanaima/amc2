@@ -1,6 +1,6 @@
 {
-  // Configuración del Worker "amc2" en Cloudflare (plan gratuito).
-  "name": "amc2",
+  // Configuración del Worker "catalogo-unas" en Cloudflare (plan gratuito).
+  "name": "catalogo-unas",
   "main": "src/worker.js",
   "compatibility_date": "2025-09-01",
   "assets": {
