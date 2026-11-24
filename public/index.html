@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Catálogo de servicios</title>
+<meta name="description" content="Servicios y precios del salón de uñas.">
+<meta name="theme-color" content="#a8234a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='11' y='3' width='10' height='9' rx='2' fill='%23271d2a'/%3E%3Crect x='7' y='11' width='18' height='19' rx='5' fill='%23a8234a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+
+/* Layout: salon header band, category chips, responsive grid of service cards with polish-swatch placeholders; edit mode swaps cards for forms. */
+:root{
+  --bg:#f6f2f4; --surface:#ffffff; --ink:#271d2a; --muted:#6f6474; --line:#e4dbe1;
+  --accent:#a8234a; --accent-ink:#ffffff; --soft:#f1e3ea; --ok:#2f7d55;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161118; --surface:#211a24; --ink:#f3ebf1; --muted:#a99cae; --line:#372d3b;
+  --accent:#f0708f; --accent-ink:#1b0c12; --soft:#2d2130; --ok:#6fcf9c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161118; --surface:#211a24; --ink:#f3ebf1; --muted:#a99cae; --line:#372d3b;
+  --accent:#f0708f; --accent-ink:#1b0c12; --soft:#2d2130; --ok:#6fcf9c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:40px 24px;border-bottom:1px solid var(--line)}
+.top-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.02;margin:6px 0 10px;text-wrap:balance;letter-spacing:-.02em}
+.tagline{color:var(--muted);max-width:60ch;margin:0;font-size:1.05rem}
+.facts{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:.95rem}
+.facts span b{font-weight:600}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{font:inherit;font-size:.95rem;font-weight:600;border-radius:999px;padding:9px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,label.file:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.ghost{background:transparent}
+button.danger{color:var(--accent)}
+button:disabled{opacity:.55;cursor:default}
+.notice{margin-top:20px;padding:12px 16px;border-radius:12px;background:var(--soft);font-size:.95rem;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding-block:22px 8px}
+.chip{padding:6px 14px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+section.cat{padding-block:18px}
+h2{font-family:var(--display);font-weight:500;font-size:1.6rem;margin:0 0 14px;display:flex;align-items:baseline;gap:10px}
+h2 small{font-family:var(--body);font-size:.85rem;color:var(--muted);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.ph{aspect-ratio:4/3;max-width:100%;position:relative;background:var(--soft);overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.swatch{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(135deg,color-mix(in srgb,var(--tone) 22%,var(--surface)),color-mix(in srgb,var(--tone) 8%,var(--surface)))}
+.bottle{width:28%;aspect-ratio:3/4;border-radius:18% 18% 22% 22%/12% 12% 18% 18%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55) 0 12%,transparent 13%),linear-gradient(160deg,var(--tone),color-mix(in srgb,var(--tone) 70%,#000));position:relative;margin-top:14%;box-shadow:0 10px 24px color-mix(in srgb,var(--tone) 35%,transparent)}
+.bottle::before{content:"";position:absolute;left:28%;right:28%;bottom:100%;height:34%;border-radius:6px 6px 2px 2px;background:var(--ink)}
+.tag{position:absolute;top:10px;left:10px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;background:var(--surface);color:var(--muted);padding:3px 8px;border-radius:999px}
+.body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
+.row{display:flex;gap:12px;justify-content:space-between;align-items:baseline}
+h3{margin:0;font-size:1.08rem;font-weight:600;line-height:1.25;min-width:0}
+.price{font-family:var(--display);font-weight:700;font-size:1.25rem;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--accent)}
+.price small{font-family:var(--body);font-size:.72rem;font-weight:500;color:var(--muted);margin-right:3px}
+.meta{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.desc{margin:0;font-size:.95rem;color:var(--ink);overflow-wrap:anywhere}
+.empty{padding:40px 0;color:var(--muted)}
+footer.foot{margin-top:28px;border-top:1px solid var(--line);padding-block:28px 48px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+footer.foot h4{margin:0 0 4px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+footer.foot p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
+.copy{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.copy span{user-select:all;font-variant-numeric:tabular-nums}
+.copy button{padding:4px 10px;font-size:.8rem}
+/* edit mode */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:22px;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.panel h2{grid-column:1/-1;margin:0}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field.full{grid-column:1/-1}
+.field label,.lbl{font-size:.8rem;font-weight:600;color:var(--muted)}
+input[type=text],input[type=number],textarea,select{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:72px}
+input[type=color]{width:44px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:2px}
+.ecard .body{gap:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem}
+label.file{display:inline-flex;align-items:center;cursor:pointer;font-weight:600;font-size:.85rem;border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--surface)}
+label.file input{position:absolute;opacity:0;width:1px;height:1px}
+.photo-tools{position:absolute;left:10px;right:10px;bottom:10px;display:flex;gap:6px;flex-wrap:wrap}
+.photo-tools button{padding:6px 12px;font-size:.85rem}
+.order{display:flex;gap:6px;flex-wrap:wrap;justify-content:space-between;border-top:1px solid var(--line);padding-top:10px}
+.order button{padding:6px 12px;font-size:.85rem}
+.addcard{border:2px dashed var(--line);border-radius:16px;min-height:200px;display:grid;place-items:center;background:transparent;color:var(--muted)}
+.savebar{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--bg);z-index:20;padding-bottom:env(safe-area-inset-bottom,0px)}
+.savebar .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding-block:12px}
+.savebar button{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 40%,transparent)}
+.savebar button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.status{font-size:.9rem}
+.spacer{height:90px}
+@media (max-width:480px){.two{grid-template-columns:1fr}header.top{padding-block:28px 18px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--muted)}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="/vendor/jspdf.umd.min.js"></script>
+<script>
+(function(){
+"use strict";
+var DRAFT_KEY = "catalogo-unas-borrador";
+var PASS_KEY = "catalogo-unas-clave";
+var DEFAULT_NAME = "Tu Salón de Uñas";
+
+var saved = null, state = null;
+var editing = false, dirty = false, saving = false, canWrite = false, uploading = 0;
+var filter = "Todos", confirmDel = null, statusMsg = "", hasDraft = false, loadError = "";
+var adminRoute = location.pathname.replace(/\/+$/, "") === "/admin" || location.hash === "#admin";
+var password = "";
+try { password = sessionStorage.getItem(PASS_KEY) || ""; } catch(e){}
+var app = document.getElementById("app");
+
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+function hex(t){ return /^#[0-9a-f]{6}$/i.test(t || "") ? t : "#c58fb3"; }
+function photoOk(p){ return typeof p === "string" && /^\/fotos\/[a-z0-9-]{8,64}\.jpg$/.test(p); }
+function uid(){ return "s" + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function priceText(s){ var p = String(s.price || "").trim(); return p ? (state.salon.currency || "") + p : "Consultar"; }
+function cats(){
+  var list = state.categories.slice();
+  state.services.forEach(function(s){ if (s.category && list.indexOf(s.category) < 0) list.push(s.category); });
+  return list;
+}
+function anyExample(){ return state.services.some(function(s){ return s.example; }); }
+
+function api(path, body){
+  return fetch(path, {method: "POST", headers: {"Content-Type": "application/json", "x-admin-password": password}, body: JSON.stringify(body || {})})
+    .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ if (!r.ok) { var e = new Error(j.error || "Error " + r.status); e.status = r.status; throw e; } return j; }); });
+}
+
+/* ---------- render ---------- */
+function render(){
+  if (!state){
+    app.innerHTML = '<div class="wrap"><p class="empty">' + esc(loadError || "Cargando catálogo…") + '</p>' + (loadError ? '<button type="button" id="btn-retry">Reintentar</button>' : '') + '</div>';
+    return;
+  }
+  document.title = (state.salon.name || "Catálogo") + " · Servicios";
+  var s = state.salon, h = "";
+  h += '<header class="top"><div class="wrap"><div class="top-row"><div style="min-width:0">';
+  h += '<div class="eyebrow">Catálogo de servicios</div>';
+  h += '<h1>' + esc(s.name) + '</h1><p class="tagline">' + esc(s.tagline) + '</p></div>';
+  h += '<div class="tools">';
+  if (window.jspdf) h += '<button id="btn-pdf" type="button">Descargar PDF</button>';
+  if (canWrite) h += editing ? '<button id="btn-view" type="button">Ver como cliente</button>' : '<button id="btn-edit" class="primary" type="button">Editar catálogo</button>';
+  if (canWrite) h += '<button id="btn-logout" class="ghost" type="button">Salir</button>';
+  h += '</div></div>';
+  h += '<div class="facts">';
+  if (s.hours) h += '<span><b>Horario</b> · ' + esc(s.hours) + '</span>';
+  if (s.address) h += '<span><b>Dirección</b> · ' + esc(s.address) + '</span>';
+  h += '</div>';
+  if (adminRoute && !canWrite) h += renderLogin();
+  if (hasDraft && canWrite) h += '<div class="notice"><span>Tienes cambios sin guardar de una visita anterior.</span><span class="tools"><button id="btn-restore" type="button">Recuperar cambios</button><button id="btn-dropdraft" class="ghost" type="button">Descartarlos</button></span></div>';
+  if (canWrite && (anyExample() || s.name === DEFAULT_NAME || !s.phone)) h += '<div class="notice"><span>Falta completar: ' + [s.name === DEFAULT_NAME ? "el nombre del salón" : "", !s.phone ? "el teléfono o WhatsApp" : "", !s.address ? "la dirección" : "", anyExample() ? "los servicios de ejemplo" : ""].filter(Boolean).join(", ") + '. Toca <b>Editar catálogo</b> para agregarlo, junto con las fotos de tus trabajos.</span></div>';
+  if (statusMsg && !editing) h += '<div class="notice"><span>' + esc(statusMsg) + '</span></div>';
+  h += '</div></header>';
+  h += '<main class="wrap">' + (editing ? renderEdit() : renderView()) + '</main>';
+  h += renderFooter();
+  if (editing){
+    var busy = saving || uploading > 0;
+    h += '<div class="spacer"></div><div class="savebar"><div class="wrap"><span class="status" id="status">' + esc(uploading ? "Subiendo foto…" : (statusMsg || (dirty ? "Tienes cambios sin publicar." : "Todo está guardado."))) + '</span><span class="tools"><button id="btn-discard" type="button"' + (dirty && !busy ? "" : " disabled") + '>Descartar cambios</button><button id="btn-save" class="primary" type="button"' + (dirty && !busy ? "" : " disabled") + '>' + (saving ? "Publicando…" : "Guardar y publicar") + '</button></span></div></div>';
+  }
+  app.innerHTML = h;
+}
+
+function renderLogin(){
+  return '<form class="notice" id="login-form" autocomplete="on"><span>Acceso del salón: escribe tu contraseña para editar el catálogo.</span><span class="tools"><input type="password" id="login-pass" autocomplete="current-password" aria-label="Contraseña" style="font:inherit;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"><button class="primary" type="submit">Entrar</button></span></form>';
+}
+
+function cardPhoto(sv, editable){
+  var h = '<div class="ph" style="--tone:' + hex(sv.tone) + '">';
+  if (photoOk(sv.photo)) h += '<img alt="' + esc(sv.name) + '" loading="lazy" src="' + esc(sv.photo) + '">';
+  else h += '<div class="swatch" aria-hidden="true"><div class="bottle"></div></div>';
+  if (sv.example) h += '<span class="tag">Ejemplo</span>';
+  if (editable){
+    h += '<div class="photo-tools"><label class="file">' + (photoOk(sv.photo) ? "Cambiar foto" : "Subir foto") + '<input type="file" accept="image/*" data-photo="' + esc(sv.id) + '" id="ph-' + esc(sv.id) + '"></label>';
+    if (photoOk(sv.photo)) h += '<button type="button" data-act="nophoto" data-id="' + esc(sv.id) + '">Quitar foto</button>';
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+
+function renderView(){
+  var list = cats(), h = '';
+  var used = list.filter(function(c){ return state.services.some(function(s){ return s.category === c; }); });
+  if (!state.services.length) return '<p class="empty">Todavía no hay servicios en el catálogo.</p>';
+  if (filter !== "Todos" && used.indexOf(filter) < 0) filter = "Todos";
+  h += '<nav class="chips" aria-label="Filtrar por categoría">';
+  ["Todos"].concat(used).forEach(function(c){ h += '<button type="button" class="chip" data-filter="' + esc(c) + '" aria-pressed="' + (filter === c) + '">' + esc(c) + '</button>'; });
+  h += '</nav>';
+  used.forEach(function(c){
+    if (filter !== "Todos" && filter !== c) return;
+    var items = state.services.filter(function(s){ return s.category === c; });
+    h += '<section class="cat"><h2>' + esc(c) + ' <small>' + items.length + (items.length === 1 ? " servicio" : " servicios") + '</small></h2><div class="grid">';
+    items.forEach(function(sv){
+      h += '<article class="card">' + cardPhoto(sv, false) + '<div class="body"><div class="row"><h3>' + esc(sv.name) + '</h3><span class="price">' + (sv.from && sv.price ? "<small>desde</small>" : "") + esc(priceText(sv)) + '</span></div>';
+      if (sv.duration) h += '<div class="meta">' + esc(sv.duration) + ' min aprox.</div>';
+      if (sv.description) h += '<p class="desc">' + esc(sv.description) + '</p>';
+      h += '</div></article>';
+    });
+    h += '</div></section>';
+  });
+  return h;
+}
+
+function inp(id, field, label, val, type, extra){
+  return '<div class="field' + (extra || "") + '"><label for="' + id + '">' + label + '</label><input type="' + (type || "text") + '" id="' + id + '" data-field="' + field + '" value="' + esc(val) + '"></div>';
+}
+
+function renderEdit(){
+  var s = state.salon, h = '';
+  h += '<div class="panel"><h2>Datos del salón</h2>';
+  h += inp("salon-name", "salon.name", "Nombre del salón", s.name);
+  h += inp("salon-hours", "salon.hours", "Horario", s.hours);
+  h += inp("salon-phone", "salon.phone", "Teléfono o WhatsApp", s.phone);
+  h += inp("salon-currency", "salon.currency", "Símbolo de moneda", s.currency);
+  h += inp("salon-address", "salon.address", "Dirección", s.address, "text", " full");
+  h += '<div class="field full"><label for="salon-tagline">Frase de presentación</label><textarea id="salon-tagline" data-field="salon.tagline">' + esc(s.tagline) + '</textarea></div>';
+  h += inp("salon-note", "salon.note", "Nota al pie (aparece en la página y el PDF)", s.note, "text", " full");
+  h += inp("salon-cats", "categories", "Categorías, separadas por comas", state.categories.join(", "), "text", " full");
+  h += '</div>';
+  h += '<section class="cat"><h2>Servicios <small>' + state.services.length + '</small></h2><div class="grid">';
+  var list = cats();
+  state.services.forEach(function(sv, i){
+    var id = esc(sv.id);
+    h += '<article class="card ecard" data-card="' + id + '">' + cardPhoto(sv, true) + '<div class="body">';
+    h += '<div class="field"><label for="n-' + id + '">Nombre</label><input type="text" id="n-' + id + '" data-sid="' + id + '" data-k="name" value="' + esc(sv.name) + '"></div>';
+    h += '<div class="two"><div class="field"><label for="p-' + id + '">Precio' + (s.currency ? " (" + esc(s.currency) + ")" : "") + '</label><input type="text" inputmode="decimal" id="p-' + id + '" data-sid="' + id + '" data-k="price" value="' + esc(sv.price) + '"></div>';
+    h += '<div class="field"><label for="d-' + id + '">Duración (min)</label><input type="text" inputmode="numeric" id="d-' + id + '" data-sid="' + id + '" data-k="duration" value="' + esc(sv.duration) + '"></div></div>';
+    h += '<label class="inline"><input type="checkbox" id="f-' + id + '" data-sid="' + id + '" data-k="from"' + (sv.from ? " checked" : "") + '> Mostrar “desde” antes del precio</label>';
+    h += '<div class="two"><div class="field"><label for="c-' + id + '">Categoría</label><select id="c-' + id + '" data-sid="' + id + '" data-k="category">';
+    list.forEach(function(c){ h += '<option' + (c === sv.category ? " selected" : "") + '>' + esc(c) + '</option>'; });
+    h += '</select></div><div class="field"><label for="t-' + id + '">Color sin foto</label><input type="color" id="t-' + id + '" data-sid="' + id + '" data-k="tone" value="' + hex(sv.tone) + '"></div></div>';
+    h += '<div class="field"><label for="x-' + id + '">Descripción</label><textarea id="x-' + id + '" data-sid="' + id + '" data-k="description">' + esc(sv.description) + '</textarea></div>';
+    h += '<div class="order"><span class="tools"><button type="button" data-act="up" data-id="' + id + '"' + (i === 0 ? " disabled" : "") + '>↑ Subir</button><button type="button" data-act="down" data-id="' + id + '"' + (i === state.services.length - 1 ? " disabled" : "") + '>↓ Bajar</button></span>';
+    h += confirmDel === sv.id ? '<span class="tools"><button type="button" class="danger" data-act="del-yes" data-id="' + id + '">Sí, eliminar</button><button type="button" data-act="del-no">No</button></span>' : '<button type="button" class="danger" data-act="del" data-id="' + id + '">Eliminar</button>';
+    h += '</div></div></article>';
+  });
+  h += '<button type="button" class="addcard" id="btn-add">+ Agregar servicio</button>';
+  h += '</div></section>';
+  return h;
+}
+
+function renderFooter(){
+  var s = state.salon, h = '<footer class="wrap foot">';
+  if (s.phone){
+    var wa = s.phone.replace(/[^0-9]/g, "");
+    h += '<div><h4>Reservas</h4><div class="copy"><span id="phone-text">' + esc(s.phone) + '</span><button type="button" id="btn-copy">Copiar</button>' + (wa.length >= 8 ? '<a class="btn" style="padding:4px 10px;font-size:.8rem;text-decoration:none" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">WhatsApp</a>' : '') + '</div></div>';
+  }
+  if (s.address) h += '<div><h4>Dónde estamos</h4><p>' + esc(s.address) + '</p></div>';
+  if (s.note) h += '<div><h4>Importante</h4><p>' + esc(s.note) + '</p></div>';
+  return h + '</footer>';
+}
+
+/* ---------- state changes ---------- */
+function find(id){ for (var i = 0; i < state.services.length; i++) if (state.services[i].id === id) return i; return -1; }
+function touch(full){
+  dirty = true; statusMsg = "";
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({base: saved.updatedAt || 0, state: state})); } catch(e){}
+  if (full) render();
+  else { var st = document.getElementById("status"); if (st) st.textContent = "Tienes cambios sin publicar."; ["btn-save","btn-discard"].forEach(function(b){ var el = document.getElementById(b); if (el) el.disabled = uploading > 0; }); }
+}
+function clearDraft(){ try { localStorage.removeItem(DRAFT_KEY); } catch(e){} hasDraft = false; }
+
+app.addEventListener("input", function(e){
+  var t = e.target, f = t.getAttribute("data-field"), sid = t.getAttribute("data-sid");
+  if (f){
+    if (f === "categories") state.categories = t.value.split(",").map(function(x){ return x.trim(); }).filter(Boolean);
+    else state.salon[f.split(".")[1]] = t.value;
+    touch(false);
+  } else if (sid){
+    var i = find(sid); if (i < 0) return;
+    var k = t.getAttribute("data-k");
+    if (k === "from" || k === "category") return;
+    state.services[i][k] = t.value; state.services[i].example = false;
+    if (k === "tone"){ var card = t.closest(".card"); var ph = card && card.querySelector(".ph"); if (ph) ph.style.setProperty("--tone", hex(t.value)); }
+    touch(false);
+  }
+});
+app.addEventListener("change", function(e){
+  var t = e.target, sid = t.getAttribute("data-sid");
+  if (t.getAttribute("data-field") === "categories" || t.getAttribute("data-field") === "salon.currency"){ render(); return; }
+  if (sid){
+    var i = find(sid); if (i < 0) return; var k = t.getAttribute("data-k");
+    if (k === "from"){ state.services[i].from = t.checked; state.services[i].example = false; touch(false); }
+    if (k === "category"){ state.services[i].category = t.value; state.services[i].example = false; touch(false); }
+  }
+  var pid = t.getAttribute("data-photo");
+  if (pid && t.files && t.files[0]) loadPhoto(pid, t.files[0]);
+});
+app.addEventListener("submit", function(e){
+  if (e.target.id !== "login-form") return;
+  e.preventDefault();
+  password = document.getElementById("login-pass").value;
+  api("/api/login").then(function(){
+    try { sessionStorage.setItem(PASS_KEY, password); } catch(err){}
+    canWrite = true; editing = true; statusMsg = ""; render();
+  }, function(err){ password = ""; statusMsg = err.message; render(); });
+});
+
+function loadPhoto(id, file){
+  var url = URL.createObjectURL(file), img = new Image();
+  img.onload = function(){
+    var W = 960, H = 720, c = document.createElement("canvas"); c.width = W; c.height = H;
+    var r = Math.max(W / img.width, H / img.height), w = img.width * r, h = img.height * r;
+    var ctx = c.getContext("2d"); ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+    ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+    URL.revokeObjectURL(url);
+    uploading++; render();
+    api("/api/upload", {dataUrl: c.toDataURL("image/jpeg", 0.8)}).then(function(j){
+      uploading--;
+      var i = find(id); if (i < 0) { render(); return; }
+      state.services[i].photo = j.url; state.services[i].example = false; touch(true);
+    }, function(err){ uploading--; statusMsg = "No se pudo subir la foto: " + err.message; render(); });
+  };
+  img.onerror = function(){ URL.revokeObjectURL(url); statusMsg = "No pude leer esa imagen. Prueba con una foto JPG o PNG."; render(); };
+  img.src = url;
+}
+
+app.addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  var id = b.getAttribute("data-id"), act = b.getAttribute("data-act"), i = id ? find(id) : -1;
+  if (b.hasAttribute("data-filter")){ filter = b.getAttribute("data-filter"); render(); return; }
+  switch (b.id){
+    case "btn-retry": loadError = ""; render(); load(); return;
+    case "btn-edit": editing = true; statusMsg = ""; render(); window.scrollTo(0, 0); return;
+    case "btn-view": editing = false; render(); return;
+    case "btn-logout": try { sessionStorage.removeItem(PASS_KEY); } catch(err){} password = ""; canWrite = false; editing = false; render(); return;
+    case "btn-add":
+      var nid = uid();
+      state.services.push({id: nid, name: "Nuevo servicio", category: cats()[0] || "Servicios", price: "", from: false, duration: "", description: "", tone: "#c58fb3", photo: null, example: false});
+      touch(true); var el = document.getElementById("n-" + nid); if (el){ el.focus(); el.select(); } return;
+    case "btn-save": save(); return;
+    case "btn-discard": state = clone(saved); dirty = false; clearDraft(); statusMsg = "Cambios descartados."; render(); return;
+    case "btn-restore":
+      try { var d = JSON.parse(localStorage.getItem(DRAFT_KEY)); if (d && d.state){ state = d.state; dirty = true; editing = true; } } catch(err){}
+      hasDraft = false; render(); return;
+    case "btn-dropdraft": clearDraft(); render(); return;
+    case "btn-copy": copyPhone(b); return;
+    case "btn-pdf": makePdf(b); return;
+  }
+  if (act === "up" && i > 0){ var a = state.services.splice(i, 1)[0]; state.services.splice(i - 1, 0, a); touch(true); }
+  else if (act === "down" && i >= 0 && i < state.services.length - 1){ var a2 = state.services.splice(i, 1)[0]; state.services.splice(i + 1, 0, a2); touch(true); }
+  else if (act === "del"){ confirmDel = id; render(); }
+  else if (act === "del-no"){ confirmDel = null; render(); }
+  else if (act === "del-yes" && i >= 0){ state.services.splice(i, 1); confirmDel = null; touch(true); }
+  else if (act === "nophoto" && i >= 0){ state.services[i].photo = null; touch(true); }
+});
+
+function copyPhone(b){
+  var txt = state.salon.phone || "";
+  var done = function(){ b.textContent = "Copiado"; setTimeout(function(){ b.textContent = "Copiar"; }, 1600); };
+  var fallback = function(){ var sp = document.getElementById("phone-text"); var r = document.createRange(); r.selectNodeContents(sp); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Seleccionado"; };
+  try { navigator.clipboard.writeText(txt).then(done, fallback); } catch(err){ fallback(); }
+}
+
+/* ---------- save ---------- */
+function save(){
+  if (saving || uploading) return;
+  saving = true; statusMsg = "Publicando…"; render();
+  api("/api/catalog", state).then(function(data){
+    saving = false; saved = data; state = clone(data); dirty = false; clearDraft();
+    statusMsg = "Catálogo publicado. Tus clientes ya ven la versión nueva."; render();
+  }, function(err){
+    saving = false;
+    if (err.status === 401){ canWrite = false; editing = false; adminRoute = true; password = ""; try { sessionStorage.removeItem(PASS_KEY); } catch(e){} statusMsg = "Tu sesión expiró o la contraseña cambió. Entra de nuevo; tus cambios siguen guardados en este navegador."; hasDraft = true; }
+    else statusMsg = "No se pudo publicar: " + err.message;
+    render();
+  });
+}
+
+/* ---------- PDF ---------- */
+function rgb(h){ h = hex(h).slice(1); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+function toDataUrl(url){
+  if (/^data:/.test(url)) return Promise.resolve(url);
+  return fetch(url).then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(b){
+    return new Promise(function(res, rej){ var fr = new FileReader(); fr.onload = function(){ res(fr.result); }; fr.onerror = rej; fr.readAsDataURL(b); });
+  });
+}
+function makePdf(btn){
+  if (!window.jspdf) return;
+  btn.disabled = true; btn.textContent = "Generando…";
+  var imgs = {};
+  Promise.all(state.services.filter(function(s){ return photoOk(s.photo); }).map(function(s){
+    return toDataUrl(s.photo).then(function(d){ imgs[s.id] = d; }, function(){});
+  })).then(function(){ buildPdf(imgs); btn.textContent = "PDF listo"; }, function(){ btn.textContent = "No se pudo crear"; })
+    .then(function(){ setTimeout(function(){ btn.disabled = false; btn.textContent = "Descargar PDF"; }, 2000); });
+}
+function buildPdf(imgs){
+  var s = state.salon, doc = new window.jspdf.jsPDF({unit: "mm", format: "a4"});
+  var M = 14, PW = 210, PH = 297, colW = (PW - 2 * M - 8) / 2, imgH = colW * 0.75, y = M;
+  var ACC = [168, 35, 74], INK = [39, 29, 42], MUT = [111, 100, 116];
+  doc.setFillColor(246, 242, 244); doc.rect(0, 0, PW, 52, "F");
+  doc.setTextColor.apply(doc, MUT); doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.text("CATÁLOGO DE SERVICIOS", M, 16);
+  doc.setTextColor.apply(doc, INK); doc.setFontSize(24); doc.text(doc.splitTextToSize(s.name || "", PW - 2 * M)[0] || "", M, 27);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor.apply(doc, MUT);
+  doc.text(doc.splitTextToSize(s.tagline || "", PW - 2 * M).slice(0, 2), M, 34);
+  var facts = [s.hours, s.phone, s.address].filter(Boolean).join("   ·   ");
+  doc.setTextColor.apply(doc, INK); doc.setFontSize(9); doc.text(doc.splitTextToSize(facts, PW - 2 * M).slice(0, 2), M, 46);
+  y = 62;
+  cats().forEach(function(c){
+    var items = state.services.filter(function(x){ return x.category === c; });
+    if (!items.length) return;
+    if (y + 12 + imgH + 30 > PH - M){ doc.addPage(); y = M + 4; }
+    doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.setTextColor.apply(doc, INK); doc.text(c, M, y); y += 6;
+    for (var k = 0; k < items.length; k += 2){
+      var pair = items.slice(k, k + 2), heights = pair.map(function(sv){
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8.5);
+        return imgH + 16 + Math.min(doc.splitTextToSize(sv.description || "", colW - 6).length, 5) * 3.6 + 4;
+      });
+      var rowH = Math.max.apply(null, heights);
+      if (y + rowH > PH - M - 6){ doc.addPage(); y = M + 4; }
+      pair.forEach(function(sv, j){
+        var x = M + j * (colW + 8), drawn = false;
+        doc.setDrawColor(228, 219, 225); doc.setLineWidth(0.3); doc.roundedRect(x, y, colW, rowH, 3, 3, "S");
+        if (imgs[sv.id]){ try { doc.addImage(imgs[sv.id], "JPEG", x + 0.4, y + 0.4, colW - 0.8, imgH); drawn = true; } catch(err){} }
+        if (!drawn){
+          var t = rgb(sv.tone); doc.setFillColor(Math.round(t[0] * .2 + 204), Math.round(t[1] * .2 + 204), Math.round(t[2] * .2 + 204));
+          doc.rect(x + 0.4, y + 0.4, colW - 0.8, imgH, "F");
+          doc.setFillColor(t[0], t[1], t[2]); doc.roundedRect(x + colW / 2 - 9, y + imgH / 2 - 8, 18, 24, 4, 4, "F");
+          doc.setFillColor.apply(doc, INK); doc.roundedRect(x + colW / 2 - 4, y + imgH / 2 - 14, 8, 7, 1.5, 1.5, "F");
+        }
+        var ty = y + imgH + 7, pr = (sv.from && sv.price ? "desde " : "") + priceText(sv);
+        doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.setTextColor.apply(doc, ACC);
+        var pw = doc.getTextWidth(pr); doc.text(pr, x + colW - 3 - pw, ty);
+        doc.setFontSize(11); doc.setTextColor.apply(doc, INK);
+        doc.text(doc.splitTextToSize(sv.name || "", colW - 9 - pw)[0] || "", x + 3, ty);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor.apply(doc, MUT);
+        if (sv.duration) doc.text(sv.duration + " min aprox.", x + 3, ty + 5);
+        doc.setTextColor.apply(doc, INK);
+        doc.text(doc.splitTextToSize(sv.description || "", colW - 6).slice(0, 5), x + 3, ty + 10.5);
+      });
+      y += rowH + 6;
+    }
+    y += 4;
+  });
+  var n = doc.getNumberOfPages();
+  for (var p = 1; p <= n; p++){
+    doc.setPage(p); doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor.apply(doc, MUT);
+    if (s.note) doc.text(doc.splitTextToSize(s.note, PW - 2 * M - 20)[0], M, PH - 7);
+    doc.text(p + " / " + n, PW - M, PH - 7, {align: "right"});
+  }
+  var name = (s.name || "catalogo").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "catalogo";
+  doc.save(name + "-catalogo.pdf");
+}
+
+/* ---------- boot ---------- */
+function load(){
+  fetch("/api/catalog", {cache: "no-store"}).then(function(r){ if (!r.ok) throw new Error(); return r.json(); }).then(function(data){
+    saved = data; state = clone(data);
+    try { var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); hasDraft = !!(d && d.state && (d.base || 0) === (saved.updatedAt || 0)); if (d && !hasDraft) localStorage.removeItem(DRAFT_KEY); } catch(e){}
+    render();
+    if (password) api("/api/login").then(function(){ canWrite = true; render(); }, function(){ password = ""; try { sessionStorage.removeItem(PASS_KEY); } catch(e){} if (adminRoute) render(); });
+  }, function(){ loadError = "No se pudo cargar el catálogo. Revisa tu conexión."; render(); });
+}
+window.addEventListener("hashchange", function(){ if (location.hash === "#admin"){ adminRoute = true; if (state) render(); } });
+window.addEventListener("beforeunload", function(e){ if (dirty){ e.preventDefault(); e.returnValue = ""; } });
+render();
+load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "catalogo-unas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev public --kv CATALOGO"
+  }
+}
